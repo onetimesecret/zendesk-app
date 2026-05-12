@@ -7,7 +7,7 @@
     "parameters": {
       "apiUsername": {
         "label": "API Username",
-        "helpText": "Your Onetime Secret account email address."
+        "helpText": "Your Onetime Secret account identifier or email address."
       },
       "apiKey": {
         "label": "API Key",
@@ -15,7 +15,7 @@
       },
       "region": {
         "label": "Region",
-        "helpText": "Enter one of: us, eu, ca, uk, nz. Must match the region where your account was created. Your API key only works on that region."
+        "helpText": "Enter one of: eu, ca, uk, nz, us. Must match the region where your account was created. Your API key only works on that region."
       },
       "defaultTTL": {
         "label": "Default Expiry",
