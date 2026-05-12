@@ -9,7 +9,7 @@
   "private": false,
   "frameworkVersion": "2.0",
   "singleInstall": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "location": {
     "support": {
       "ticket_sidebar": {
@@ -39,7 +39,8 @@
       "name": "region",
       "type": "text",
       "required": true,
-      "secure": false
+      "secure": false,
+      "default": "eu"
     },
     {
       "name": "defaultTTL",
@@ -57,11 +58,11 @@
   ],
   "domainWhitelist": [
     "onetimesecret.com",
-    "us.onetimesecret.com",
     "eu.onetimesecret.com",
-    "ca.onetimesecret.com",
     "uk.onetimesecret.com",
+    "ca.onetimesecret.com",
     "nz.onetimesecret.com",
+    "us.onetimesecret.com",
     "{{setting.customDomain}}"
   ]
 }
