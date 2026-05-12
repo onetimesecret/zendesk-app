@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: #2f3941;
+      padding: 12px;
+      background: #fff;
+    }
+
+    /* ── Form controls ─────────────────────────────────── */
+
+    .ots-field {
+      margin-bottom: 12px;
+    }
+
+    .ots-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #68737d;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .ots-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 8px 10px;
+      border: 1px solid #d8dcde;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #2f3941;
+      resize: vertical;
+      transition: border-color 0.15s;
+    }
+    .ots-textarea:focus {
+      outline: none;
+      border-color: #1f73b7;
+      box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.15);
+    }
+
+    .ots-input {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #d8dcde;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #2f3941;
+      transition: border-color 0.15s;
+    }
+    .ots-input:focus {
+      outline: none;
+      border-color: #1f73b7;
+      box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.15);
+    }
+
+    .ots-select {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #d8dcde;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      color: #2f3941;
+      background: #fff;
+      cursor: pointer;
+    }
+    .ots-select:focus {
+      outline: none;
+      border-color: #1f73b7;
+    }
+
+    /* ── Buttons ────────────────────────────────────────── */
+
+    .ots-btn {
+      display: block;
+      width: 100%;
+      padding: 9px 16px;
+      border: none;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s, opacity 0.15s;
+    }
+    .ots-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .ots-btn-primary {
+      background: #dc4a22;
+      color: #fff;
+    }
+    .ots-btn-primary:hover:not(:disabled) {
+      background: #c43d1a;
+    }
+
+    .ots-btn-secondary {
+      background: #f8f9f9;
+      color: #2f3941;
+      border: 1px solid #d8dcde;
+    }
+    .ots-btn-secondary:hover:not(:disabled) {
+      background: #e9ebed;
+    }
+
+    .ots-btn + .ots-btn {
+      margin-top: 8px;
+    }
+
+    /* ── Result panel ──────────────────────────────────── */
+
+    .ots-result {
+      display: none;
+    }
+
+    .ots-result-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .ots-check-icon {
+      width: 20px;
+      height: 20px;
+      background: #038153;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ots-check-icon svg {
+      width: 12px;
+      height: 12px;
+      fill: #fff;
+    }
+
+    .ots-result-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #038153;
+    }
+
+    .ots-link-display {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #d8dcde;
+      border-radius: 4px;
+      font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+      font-size: 11px;
+      color: #2f3941;
+      background: #f8f9f9;
+      word-break: break-all;
+      margin-bottom: 12px;
+    }
+
+    .ots-passphrase-note {
+      font-size: 12px;
+      color: #87929d;
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      background: #fff8f0;
+      border: 1px solid #ffd073;
+      border-radius: 4px;
+    }
+
+    /* ── Error state ───────────────────────────────────── */
+
+    .ots-error {
+      display: none;
+      padding: 10px 12px;
+      background: #fff0f1;
+      border: 1px solid #e35b66;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .ots-error-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #cc3340;
+      margin-bottom: 4px;
+    }
+
+    .ots-error-message {
+      font-size: 12px;
+      color: #681219;
+    }
+
+    /* ── Loading spinner ───────────────────────────────── */
+
+    .ots-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: ots-spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    @keyframes ots-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Branding ──────────────────────────────────────── */
+
+    .ots-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #e9ebed;
+    }
+
+    .ots-brand-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .ots-brand-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2f3941;
+    }
+
+    .ots-brand-region {
+      font-size: 11px;
+      color: #87929d;
+      font-weight: 400;
+      margin-left: auto;
+      text-transform: uppercase;
+    }
+
+    /* ── Utility ───────────────────────────────────────── */
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <!-- ── Brand header ──────────────────────────────────── -->
+  <div class="ots-brand">
+    <svg class="ots-brand-icon" viewBox="0 0 1445 1445" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1445" height="1445" fill="#DC4A22"/>
+      <path d="M0 0 C1.12 -0.01 2.23 -0.01 3.38 -0.02 C41.15 -0.21 76.81 2.74 113.82 10.2 C114.86 10.41 115.9 10.62 116.96 10.83 C161.35 20.12 209.54 39.34 243.83 69.46 C245.42 70.85 247.07 72.16 248.73 73.45 C254.39 78.13 258.33 82.3 259.33 89.77 C259.67 94.06 259.76 98.33 259.8 102.63 C259.86 104.53 259.93 106.42 260 108.32 C260.18 113.35 260.29 118.38 260.38 123.41 C260.49 128.6 260.67 133.8 260.84 138.99 C261.1 147.11 261.33 155.23 261.53 163.34 C261.83 175.27 262.35 187.18 262.94 199.09 C263.68 214.47 264.13 229.81 263.82 245.2 C261.17 246.09 259.19 246.43 256.44 246.65 C255.55 246.73 254.67 246.8 253.75 246.87 C252.8 246.95 251.84 247.03 250.85 247.11 C249.85 247.19 248.85 247.27 247.82 247.36 C244.61 247.62 241.41 247.88 238.2 248.14 C220.73 249.55 220.73 249.55 203.3 251.45 C194.21 252.56 185.08 253.29 175.96 254.06 C172.8 254.33 169.65 254.6 166.49 254.88 C164.46 255.05 162.42 255.23 160.39 255.4 C159.46 255.48 158.53 255.56 157.57 255.64 C151.97 256.11 146.45 256.28 140.82 256.2 C138.68 243.45 137 230.7 135.64 217.85 C135.32 214.89 134.98 211.93 134.64 208.97 C132.79 192.63 132.79 192.63 132.36 184.48 C132.15 175.49 132.15 175.49 128.49 167.56 C125.04 164.52 121.18 162.74 116.94 161.07 C114.82 160.2 112.83 159.21 110.8 158.12 C80.32 141.85 47 136.87 12.76 136.77 C11.92 136.76 11.07 136.75 10.2 136.75 C-17.89 136.61 -48.49 141.47 -71.18 159.2 C-72.06 159.8 -72.95 160.4 -73.86 161.02 C-84.5 171.07 -90.16 185.2 -90.57 199.64 C-90.58 201.63 -90.59 203.62 -90.57 205.62 C-90.55 207.63 -90.57 209.65 -90.59 211.67 C-90.53 230.13 -84.96 246.98 -72.01 260.46 C-50.22 280.75 -16.06 289.26 11.82 297.2 C12.92 297.52 12.92 297.52 14.05 297.85 C22.12 300.2 30.25 302.11 38.49 303.8 C39.2 303.94 39.91 304.09 40.64 304.24 C41.37 304.39 42.11 304.54 42.86 304.69 C44.41 305.01 45.96 305.32 47.51 305.64 C48.29 305.8 49.07 305.96 49.88 306.12 C72.96 310.87 95.76 316.81 118.58 322.62 C122.56 323.63 126.54 324.63 130.53 325.61 C139.39 327.79 148.17 330.02 156.82 332.95 C157.82 333.29 158.82 333.63 159.85 333.98 C190.66 344.63 219.58 361 243.57 383.13 C245.59 384.99 247.66 386.75 249.76 388.52 C281.28 416.23 294.78 458.59 298.82 499.2 C298.92 500.14 299.01 501.08 299.11 502.05 C299.92 511.11 300.01 520.14 300.01 529.23 C300.01 531.8 300.03 534.38 300.05 536.95 C300.13 561.32 297.52 587 289.82 610.2 C289.4 611.58 288.98 612.96 288.55 614.34 C280.43 640.37 267.58 664.96 248.89 684.98 C247.03 686.98 245.27 689.04 243.51 691.14 C217.39 720.99 179.38 739.53 142.6 752.24 C140.33 753.03 138.08 753.84 135.84 754.67 C118.41 760.94 99.88 764.04 81.64 766.95 C80.42 767.15 79.2 767.35 77.94 767.55 C56.34 770.86 34.74 771.53 12.93 771.46 C9.31 771.45 5.7 771.46 2.08 771.47 C-20.96 771.53 -43.98 770.84 -66.82 767.54 C-69.76 767.12 -72.71 766.73 -75.66 766.33 C-88.7 764.55 -101.63 762.58 -114.49 759.78 C-117.51 759.13 -120.54 758.5 -123.56 757.86 C-172.26 747.51 -227.93 730.44 -264.18 694.2 C-264.01 682.71 -262.42 671.27 -260.93 659.89 C-260.52 656.79 -260.12 653.69 -259.72 650.59 C-259.61 649.72 -259.5 648.85 -259.38 647.95 C-258.25 638.97 -257.22 629.98 -256.18 620.98 C-253.53 597.94 -250.67 574.93 -247.73 551.92 C-247.1 546.96 -246.47 541.99 -245.84 537.03 C-244.62 527.42 -243.4 517.81 -242.18 508.2 C-234.65 508.05 -227.3 508.65 -219.81 509.38 C-217.83 509.56 -215.85 509.75 -213.87 509.94 C-211.06 510.2 -208.26 510.48 -205.45 510.75 C-201.85 511.09 -198.24 511.44 -194.64 511.78 C-190.29 512.19 -185.94 512.61 -181.59 513.02 C-172.94 513.85 -164.29 514.66 -155.63 515.46 C-154.13 515.6 -154.13 515.6 -152.59 515.74 C-148.87 516.08 -145.15 516.42 -141.43 516.76 C-138.96 516.99 -136.49 517.21 -134.02 517.44 C-133.31 517.5 -132.61 517.57 -131.89 517.63 C-127.62 518.03 -123.43 518.59 -119.18 519.2 C-119.18 549.56 -119.18 579.92 -119.18 611.2 C-117.2 611.86 -115.22 612.52 -113.18 613.2 C-111.62 613.9 -110.08 614.62 -108.56 615.38 C-107.71 615.79 -106.87 616.2 -106 616.63 C-105.11 617.07 -104.22 617.5 -103.3 617.95 C-94.41 622.24 -85.56 626.13 -76.18 629.2 C-75.2 629.53 -75.2 629.53 -74.21 629.87 C-36.36 642.38 7.85 640.3 46.82 635.2 C47.85 635.07 48.89 634.95 49.95 634.81 C72.64 631.87 101.76 625.8 117.18 607.39 C133.19 585.5 135.64 558.23 132.42 531.87 C128.75 509.68 119.41 489.96 101.11 476.15 C63.62 451.54 13.28 441.78 -30.3 434.25 C-57.97 429.42 -85.35 422.51 -112.18 414.2 C-113.12 413.91 -113.12 413.91 -114.08 413.61 C-152.43 401.72 -184.97 385.07 -214.18 357.2 C-214.84 356.59 -215.51 355.98 -216.19 355.35 C-233.23 339.23 -244.14 316.55 -250.18 294.2 C-250.38 293.45 -250.59 292.69 -250.8 291.91 C-251.49 289.33 -252.15 286.73 -252.8 284.14 C-253.01 283.36 -253.21 282.57 -253.43 281.77 C-257.5 264.99 -257.52 247.53 -257.49 230.37 C-257.49 226.97 -257.51 223.57 -257.54 220.18 C-257.69 166.04 -242.45 114.53 -204.18 75.2 C-162.48 33.33 -97.49 11.38 -40.18 3.2 C-39.49 3.1 -38.8 3 -38.09 2.9 C-25.41 1.06 -12.81 0.05 0 0 Z" fill="#FEFEFE" transform="translate(707.18,357.8)"/>
+    </svg>
+    <span class="ots-brand-text">Onetime Secret</span>
+    <span class="ots-brand-region" id="regionBadge"></span>
+  </div>
+
+  <!-- ── Error display ─────────────────────────────────── -->
+  <div class="ots-error" id="errorPanel">
+    <div class="ots-error-title" id="errorTitle"></div>
+    <div class="ots-error-message" id="errorMessage"></div>
+  </div>
+
+  <!-- ── Form view ─────────────────────────────────────── -->
+  <div id="formView">
+    <div class="ots-field">
+      <label class="ots-label" for="secretInput">Secret content</label>
+      <textarea class="ots-textarea" id="secretInput" placeholder="Paste sensitive content here..." rows="4"></textarea>
+    </div>
+
+    <div class="ots-field">
+      <label class="ots-label" for="passphraseInput">Passphrase (optional)</label>
+      <input class="ots-input" type="text" id="passphraseInput" placeholder="Require a passphrase to view" autocomplete="off">
+    </div>
+
+    <div class="ots-field">
+      <label class="ots-label" for="ttlSelect">Expires after</label>
+      <select class="ots-select" id="ttlSelect">
+        <option value="300">5 minutes</option>
+        <option value="3600">1 hour</option>
+        <option value="86400">1 day</option>
+        <option value="259200">3 days</option>
+        <option value="604800" selected>7 days</option>
+        <option value="1209600">14 days</option>
+        <option value="2592000">30 days</option>
+      </select>
+    </div>
+
+    <button class="ots-btn ots-btn-primary" id="generateBtn">Generate Link</button>
+  </div>
+
+  <!-- ── Result view ───────────────────────────────────── -->
+  <div class="ots-result" id="resultView">
+    <div class="ots-result-header">
+      <div class="ots-check-icon">
+        <svg viewBox="0 0 16 16"><path d="M6.5 12.5l-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z"/></svg>
+      </div>
+      <span class="ots-result-title">Secret link ready</span>
+    </div>
+
+    <div class="ots-link-display" id="linkDisplay"></div>
+
+    <div class="ots-passphrase-note hidden" id="passphraseNote">
+      The recipient will need the passphrase to view this secret.
+    </div>
+
+    <button class="ots-btn ots-btn-primary" id="insertBtn">Insert into Comment</button>
+    <button class="ots-btn ots-btn-secondary" id="copyBtn">Copy Link</button>
+    <button class="ots-btn ots-btn-secondary" id="newSecretBtn">Create Another</button>
+  </div>
+
+  <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+  <script>
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    // Onetime Secret – Zendesk Support App
+    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    (function () {
+      'use strict';
+
+      // ── Region map ────────────────────────────────────
+      var REGIONS = {
+        us: 'us.onetimesecret.com',
+        eu: 'eu.onetimesecret.com',
+        ca: 'ca.onetimesecret.com',
+        uk: 'uk.onetimesecret.com',
+        nz: 'nz.onetimesecret.com'
+      };
+
+      // ── State ─────────────────────────────────────────
+      var client = ZAFClient.init();
+      var settings = {};
+      var currentShareUrl = '';
+
+      // ── Init ──────────────────────────────────────────
+      client.on('app.registered', function () {
+        client.get('currentUser.locale').then(function () {
+          return client.metadata();
+        }).then(function (metadata) {
+          settings = metadata.settings || {};
+          applySettings();
+          resize();
+        });
+      });
+
+      function applySettings() {
+        // Set default TTL from settings if provided
+        var defaultTTL = settings.defaultTTL;
+        if (defaultTTL) {
+          var ttlSelect = document.getElementById('ttlSelect');
+          var option = ttlSelect.querySelector('option[value="' + defaultTTL + '"]');
+          if (option) {
+            ttlSelect.value = defaultTTL;
+          }
+        }
+
+        // Show region badge
+        var region = (settings.region || 'us').toLowerCase();
+        var badge = document.getElementById('regionBadge');
+        badge.textContent = region.toUpperCase();
+        if (settings.customDomain) {
+          badge.textContent += ' · ' + settings.customDomain;
+        }
+      }
+
+      // ── OTS API Client ────────────────────────────────
+
+      function getBaseUrl() {
+        var region = (settings.region || 'us').toLowerCase();
+        var host = REGIONS[region];
+        if (!host) {
+          host = REGIONS.us;
+        }
+        return 'https://' + host;
+      }
+
+      function getAuthHeader() {
+        var username = settings.apiUsername || '';
+        var apiKey = settings.apiKey || '';
+        return 'Basic ' + btoa(username + ':' + apiKey);
+      }
+
+      /**
+       * Create a secret via the OTS v2 API.
+       *
+       * @param {Object} opts
+       * @param {string} opts.secret    - The secret content
+       * @param {string} [opts.passphrase] - Optional passphrase
+       * @param {number} [opts.ttl]     - TTL in seconds
+       * @returns {Promise<Object>}     - The API response
+       */
+      function concealSecret(opts) {
+        var baseUrl = getBaseUrl();
+        var url = baseUrl + '/api/v2/secret/conceal';
+
+        var payload = {
+          secret: opts.secret,
+          ttl: opts.ttl
+        };
+
+        // Only include passphrase if explicitly provided
+        if (opts.passphrase) {
+          payload.passphrase = opts.passphrase;
+        }
+
+        // Include custom domain for branded share links
+        if (settings.customDomain) {
+          payload.share_domain = settings.customDomain;
+        }
+
+        return client.request({
+          url: url,
+          type: 'POST',
+          contentType: 'application/json',
+          headers: {
+            'Authorization': getAuthHeader()
+          },
+          data: JSON.stringify({ secret: payload }),
+          secure: true
+        }).then(function (response) {
+          // ZAF wraps the response; the actual data may be nested
+          var data = response;
+
+          if (!data.success) {
+            throw new Error(data.error || 'Secret creation failed');
+          }
+
+          // Build the share URL
+          // The API returns share_url in the receipt, but we also
+          // construct it ourselves to handle custom domains properly.
+          var shareUrl = buildShareUrl(data);
+          return {
+            shareUrl: shareUrl,
+            receipt: data.record.receipt,
+            hasPassphrase: !!opts.passphrase
+          };
+        });
+      }
+
+      /**
+       * Construct the share URL from the API response.
+       *
+       * If a custom domain is configured, use it. Otherwise fall back
+       * to the share_url returned by the API, or construct from the
+       * regional domain.
+       */
+      function buildShareUrl(data) {
+        var receipt = data.record.receipt || data.record.metadata;
+
+        // Prefer the API's share_url if present
+        if (receipt && receipt.share_url) {
+          // If custom domain is set, rewrite the host portion
+          if (settings.customDomain) {
+            try {
+              var parsed = new URL(receipt.share_url);
+              parsed.hostname = settings.customDomain;
+              return parsed.toString();
+            } catch (e) {
+              // Fall through to manual construction
+            }
+          }
+          return receipt.share_url;
+        }
+
+        // Manual fallback
+        var host = settings.customDomain || getBaseUrl().replace('https://', '');
+        var identifier = receipt ? receipt.identifier : '';
+        return 'https://' + host + '/secret/' + identifier;
+      }
+
+      // ── UI Handlers ───────────────────────────────────
+
+      var formView = document.getElementById('formView');
+      var resultView = document.getElementById('resultView');
+      var errorPanel = document.getElementById('errorPanel');
+      var generateBtn = document.getElementById('generateBtn');
+      var insertBtn = document.getElementById('insertBtn');
+      var copyBtn = document.getElementById('copyBtn');
+      var newSecretBtn = document.getElementById('newSecretBtn');
+      var secretInput = document.getElementById('secretInput');
+      var passphraseInput = document.getElementById('passphraseInput');
+      var ttlSelect = document.getElementById('ttlSelect');
+      var linkDisplay = document.getElementById('linkDisplay');
+      var passphraseNote = document.getElementById('passphraseNote');
+
+      generateBtn.addEventListener('click', handleGenerate);
+      insertBtn.addEventListener('click', handleInsert);
+      copyBtn.addEventListener('click', handleCopy);
+      newSecretBtn.addEventListener('click', handleReset);
+
+      function handleGenerate() {
+        var secret = secretInput.value.trim();
+        if (!secret) {
+          showError('Missing content', 'Please enter the content you want to share.');
+          return;
+        }
+
+        hideError();
+        setLoading(true);
+
+        var opts = {
+          secret: secret,
+          ttl: parseInt(ttlSelect.value, 10)
+        };
+
+        var passphrase = passphraseInput.value;
+        if (passphrase) {
+          opts.passphrase = passphrase;
+        }
+
+        concealSecret(opts).then(function (result) {
+          currentShareUrl = result.shareUrl;
+          linkDisplay.textContent = currentShareUrl;
+
+          if (result.hasPassphrase) {
+            passphraseNote.classList.remove('hidden');
+          } else {
+            passphraseNote.classList.add('hidden');
+          }
+
+          formView.style.display = 'none';
+          resultView.style.display = 'block';
+          resize();
+        }).catch(function (err) {
+          var msg = 'Could not reach the Onetime Secret API. Check your settings.';
+          if (err && err.status === 401) {
+            msg = 'Authentication failed. Check your API username and key.';
+          } else if (err && err.responseJSON && err.responseJSON.error) {
+            msg = err.responseJSON.error;
+          } else if (err && err.message) {
+            msg = err.message;
+          }
+          showError('Something went wrong', msg);
+        }).finally(function () {
+          setLoading(false);
+        });
+      }
+
+      function handleInsert() {
+        if (!currentShareUrl) return;
+
+        // Insert the link into the current ticket comment
+        client.invoke('comment.appendText', currentShareUrl);
+      }
+
+      function handleCopy() {
+        if (!currentShareUrl) return;
+
+        navigator.clipboard.writeText(currentShareUrl).then(function () {
+          var original = copyBtn.textContent;
+          copyBtn.textContent = 'Copied!';
+          setTimeout(function () {
+            copyBtn.textContent = original;
+          }, 1500);
+        }).catch(function () {
+          // Fallback: select the text in the display
+          var range = document.createRange();
+          range.selectNodeContents(linkDisplay);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        });
+      }
+
+      function handleReset() {
+        currentShareUrl = '';
+        secretInput.value = '';
+        passphraseInput.value = '';
+        linkDisplay.textContent = '';
+        passphraseNote.classList.add('hidden');
+        hideError();
+
+        resultView.style.display = 'none';
+        formView.style.display = 'block';
+        resize();
+      }
+
+      function setLoading(loading) {
+        if (loading) {
+          generateBtn.disabled = true;
+          generateBtn.innerHTML = '<span class="ots-spinner"></span>Encrypting...';
+        } else {
+          generateBtn.disabled = false;
+          generateBtn.textContent = 'Generate Link';
+        }
+      }
+
+      function showError(title, message) {
+        document.getElementById('errorTitle').textContent = title;
+        document.getElementById('errorMessage').textContent = message;
+        errorPanel.style.display = 'block';
+        resize();
+      }
+
+      function hideError() {
+        errorPanel.style.display = 'none';
+      }
+
+      function resize() {
+        client.invoke('resize', { width: '100%', height: document.body.scrollHeight + 16 + 'px' });
+      }
+    })();
+  </script>
+</body>
+</html>
