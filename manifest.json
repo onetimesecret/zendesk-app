@@ -9,7 +9,7 @@
   "private": false,
   "frameworkVersion": "2.0",
   "singleInstall": true,
-  "version": "1.0.0",
+  "version": "0.2.0",
   "location": {
     "support": {
       "ticket_sidebar": {
@@ -27,7 +27,8 @@
       "name": "apiUsername",
       "type": "text",
       "required": true,
-      "secure": false
+      "secure": false,
+      "helpText": "Your account identifier or email address"
     },
     {
       "name": "apiKey",
@@ -38,20 +39,24 @@
     {
       "name": "region",
       "type": "text",
-      "required": false,
-      "secure": false
-    },
-    {
-      "name": "customDomain",
-      "type": "text",
-      "required": false,
-      "secure": false
+      "required": true,
+      "secure": false,
+      "helpText": "(Required) The region where the links will be created. One of: eu, ca, us, uk, nz"
     },
     {
       "name": "defaultTTL",
       "type": "text",
       "required": false,
-      "secure": false
+      "secure": false,
+      "default": "604800",
+      "helpText": "(Optional) The amount of time before the secret link expires (in seconds, default is 7 days)"
+    },
+    {
+      "name": "customDomain",
+      "type": "text",
+      "required": false,
+      "secure": false,
+      "helpText": "(optional) Your custom domain"
     }
   ],
   "domainWhitelist": [

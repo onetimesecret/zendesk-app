@@ -356,22 +356,34 @@
       });
 
       function applySettings() {
-        // Set default TTL from settings if provided
-        var defaultTTL = settings.defaultTTL;
-        if (defaultTTL) {
-          var ttlSelect = document.getElementById('ttlSelect');
-          var option = ttlSelect.querySelector('option[value="' + defaultTTL + '"]');
-          if (option) {
-            ttlSelect.value = defaultTTL;
-          }
+        var region = (settings.region || 'us').toLowerCase().trim();
+        settings.region = region;
+
+        // Validate region
+        if (!REGIONS[region]) {
+          showError(
+            'Invalid region',
+            'The region "' + region + '" is not recognized. Go to Admin Center → Apps → Onetime Secret and set it to one of: us, eu, ca, uk, nz.'
+          );
         }
 
         // Show region badge
-        var region = (settings.region || 'us').toLowerCase();
         var badge = document.getElementById('regionBadge');
         badge.textContent = region.toUpperCase();
         if (settings.customDomain) {
           badge.textContent += ' · ' + settings.customDomain;
+        }
+
+        // Pre-select the admin's default TTL in the sidebar dropdown
+        var defaultTTL = settings.defaultTTL;
+        if (defaultTTL) {
+          var ttl = document.getElementById('ttlSelect');
+          var match = ttl.querySelector('option[value="' + defaultTTL + '"]');
+          if (match) {
+            ttl.value = defaultTTL;
+          }
+          // If the value doesn't match a dropdown option, leave the
+          // built-in default (7 days) selected rather than breaking.
         }
       }
 
@@ -386,20 +398,18 @@
         return 'https://' + host;
       }
 
-      function getAuthHeader() {
-        var username = settings.apiUsername || '';
-        var apiKey = settings.apiKey || '';
-        return 'Basic ' + btoa(username + ':' + apiKey);
-      }
-
       /**
        * Create a secret via the OTS v2 API.
        *
+       * Auth uses {{setting.*}} placeholders so the ZAF proxy
+       * substitutes the real values server-side. The API key
+       * never reaches the browser.
+       *
        * @param {Object} opts
-       * @param {string} opts.secret    - The secret content
+       * @param {string} opts.secret       - The secret content
        * @param {string} [opts.passphrase] - Optional passphrase
-       * @param {number} [opts.ttl]     - TTL in seconds
-       * @returns {Promise<Object>}     - The API response
+       * @param {number} [opts.ttl]        - TTL in seconds
+       * @returns {Promise<Object>}        - The API response
        */
       function concealSecret(opts) {
         var baseUrl = getBaseUrl();
@@ -420,26 +430,30 @@
           payload.share_domain = settings.customDomain;
         }
 
+        // ZAF's basic_auth mechanism: the proxy base64-encodes
+        // username:password server-side and substitutes {{basic_auth.token}}.
+        // The API key (a secure setting) never reaches the browser.
+        // apiUsername is read from metadata since it's not secure.
         return client.request({
           url: url,
           type: 'POST',
           contentType: 'application/json',
           headers: {
-            'Authorization': getAuthHeader()
+            'Authorization': 'Basic {{basic_auth.token}}'
+          },
+          basic_auth: {
+            username: settings.apiUsername,
+            password: '{{setting.apiKey}}'
           },
           data: JSON.stringify({ secret: payload }),
           secure: true
         }).then(function (response) {
-          // ZAF wraps the response; the actual data may be nested
           var data = response;
 
           if (!data.success) {
             throw new Error(data.error || 'Secret creation failed');
           }
 
-          // Build the share URL
-          // The API returns share_url in the receipt, but we also
-          // construct it ourselves to handle custom domains properly.
           var shareUrl = buildShareUrl(data);
           return {
             shareUrl: shareUrl,
