@@ -1,694 +1,749 @@
-<!DOCTYPE html>
+<!doctype html>
 <html data-theme="light">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.css">
-  <script>
-    // Apply color scheme before first paint to avoid flash
-    (function () {
-      var params = new URLSearchParams(location.search);
-      var scheme = params.get('colorScheme');
-      if (scheme === 'dark' || scheme === 'light') {
-        document.documentElement.setAttribute('data-theme', scheme);
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.css"
+    />
+    <script>
+      // Apply color scheme before first paint to avoid flash
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var scheme = params.get("colorScheme");
+        if (scheme === "dark" || scheme === "light") {
+          document.documentElement.setAttribute("data-theme", scheme);
+        }
+      })();
+    </script>
+    <style>
+      /* ── Theme tokens ──────────────────────────────────── */
+
+      [data-theme="light"] {
+        --ots-bg: #fff;
+        --ots-bg-surface: #f8f9f9;
+        --ots-fg: #2f3941;
+        --ots-fg-muted: #68737d;
+        --ots-fg-subtle: #87929d;
+        --ots-border: #d8dcde;
+        --ots-border-subtle: #e9ebed;
+        --ots-accent: #1f73b7;
+        --ots-accent-shadow: rgba(31, 115, 183, 0.15);
+        --ots-success: #038153;
+        --ots-success-fg: #fff;
+        --ots-error-bg: #fff0f1;
+        --ots-error-border: #e35b66;
+        --ots-error-title: #cc3340;
+        --ots-error-fg: #681219;
+        --ots-warning-bg: #fff8f0;
+        --ots-warning-border: #ffd073;
+        --ots-btn-secondary-bg: #f8f9f9;
+        --ots-btn-secondary-hover: #e9ebed;
       }
-    })();
-  </script>
-  <style>
-    /* ── Theme tokens ──────────────────────────────────── */
 
-    [data-theme="light"] {
-      --ots-bg: #fff;
-      --ots-bg-surface: #f8f9f9;
-      --ots-fg: #2f3941;
-      --ots-fg-muted: #68737d;
-      --ots-fg-subtle: #87929d;
-      --ots-border: #d8dcde;
-      --ots-border-subtle: #e9ebed;
-      --ots-accent: #1f73b7;
-      --ots-accent-shadow: rgba(31, 115, 183, 0.15);
-      --ots-success: #038153;
-      --ots-success-fg: #fff;
-      --ots-error-bg: #fff0f1;
-      --ots-error-border: #e35b66;
-      --ots-error-title: #cc3340;
-      --ots-error-fg: #681219;
-      --ots-warning-bg: #fff8f0;
-      --ots-warning-border: #ffd073;
-      --ots-btn-secondary-bg: #f8f9f9;
-      --ots-btn-secondary-hover: #e9ebed;
-    }
+      [data-theme="dark"] {
+        --ots-bg: #151a1e;
+        --ots-bg-surface: #1e252b;
+        --ots-fg: #d8dcde;
+        --ots-fg-muted: #87929d;
+        --ots-fg-subtle: #68737d;
+        --ots-border: #3a4650;
+        --ots-border-subtle: #2d3843;
+        --ots-accent: #5293c7;
+        --ots-accent-shadow: rgba(82, 147, 199, 0.25);
+        --ots-success: #0a8060;
+        --ots-success-fg: #d8dcde;
+        --ots-error-bg: #2d1619;
+        --ots-error-border: #cc3340;
+        --ots-error-title: #e35b66;
+        --ots-error-fg: #f5b5ba;
+        --ots-warning-bg: #2d2415;
+        --ots-warning-border: #c49a3a;
+        --ots-btn-secondary-bg: #1e252b;
+        --ots-btn-secondary-hover: #2d3843;
+      }
 
-    [data-theme="dark"] {
-      --ots-bg: #151a1e;
-      --ots-bg-surface: #1e252b;
-      --ots-fg: #d8dcde;
-      --ots-fg-muted: #87929d;
-      --ots-fg-subtle: #68737d;
-      --ots-border: #3a4650;
-      --ots-border-subtle: #2d3843;
-      --ots-accent: #5293c7;
-      --ots-accent-shadow: rgba(82, 147, 199, 0.25);
-      --ots-success: #0a8060;
-      --ots-success-fg: #d8dcde;
-      --ots-error-bg: #2d1619;
-      --ots-error-border: #cc3340;
-      --ots-error-title: #e35b66;
-      --ots-error-fg: #f5b5ba;
-      --ots-warning-bg: #2d2415;
-      --ots-warning-border: #c49a3a;
-      --ots-btn-secondary-bg: #1e252b;
-      --ots-btn-secondary-hover: #2d3843;
-    }
+      /* ── Base ──────────────────────────────────────────── */
 
-    /* ── Base ──────────────────────────────────────────── */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        font-size: 13px;
+        color: var(--ots-fg);
+        padding: 12px;
+        background: var(--ots-bg);
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      font-size: 13px;
-      color: var(--ots-fg);
-      padding: 12px;
-      background: var(--ots-bg);
-    }
+      /* ── Form controls ─────────────────────────────────── */
 
-    /* ── Form controls ─────────────────────────────────── */
+      .ots-field {
+        margin-bottom: 12px;
+      }
 
-    .ots-field {
-      margin-bottom: 12px;
-    }
+      .ots-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ots-fg-muted);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
 
-    .ots-label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ots-fg-muted);
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
+      .ots-textarea {
+        width: 100%;
+        min-height: 80px;
+        padding: 8px 10px;
+        border: 1px solid var(--ots-border);
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 13px;
+        color: var(--ots-fg);
+        background: var(--ots-bg);
+        resize: vertical;
+        transition: border-color 0.15s;
+      }
+      .ots-textarea:focus {
+        outline: none;
+        border-color: var(--ots-accent);
+        box-shadow: 0 0 0 3px var(--ots-accent-shadow);
+      }
 
-    .ots-textarea {
-      width: 100%;
-      min-height: 80px;
-      padding: 8px 10px;
-      border: 1px solid var(--ots-border);
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--ots-fg);
-      background: var(--ots-bg);
-      resize: vertical;
-      transition: border-color 0.15s;
-    }
-    .ots-textarea:focus {
-      outline: none;
-      border-color: var(--ots-accent);
-      box-shadow: 0 0 0 3px var(--ots-accent-shadow);
-    }
+      .ots-input {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1px solid var(--ots-border);
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 13px;
+        color: var(--ots-fg);
+        background: var(--ots-bg);
+        transition: border-color 0.15s;
+      }
+      .ots-input:focus {
+        outline: none;
+        border-color: var(--ots-accent);
+        box-shadow: 0 0 0 3px var(--ots-accent-shadow);
+      }
 
-    .ots-input {
-      width: 100%;
-      padding: 7px 10px;
-      border: 1px solid var(--ots-border);
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--ots-fg);
-      background: var(--ots-bg);
-      transition: border-color 0.15s;
-    }
-    .ots-input:focus {
-      outline: none;
-      border-color: var(--ots-accent);
-      box-shadow: 0 0 0 3px var(--ots-accent-shadow);
-    }
+      .ots-select {
+        width: 100%;
+        padding: 7px 10px;
+        border: 1px solid var(--ots-border);
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 13px;
+        color: var(--ots-fg);
+        background: var(--ots-bg);
+        cursor: pointer;
+      }
+      .ots-select:focus {
+        outline: none;
+        border-color: var(--ots-accent);
+      }
 
-    .ots-select {
-      width: 100%;
-      padding: 7px 10px;
-      border: 1px solid var(--ots-border);
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 13px;
-      color: var(--ots-fg);
-      background: var(--ots-bg);
-      cursor: pointer;
-    }
-    .ots-select:focus {
-      outline: none;
-      border-color: var(--ots-accent);
-    }
+      /* ── Buttons ────────────────────────────────────────── */
 
-    /* ── Buttons ────────────────────────────────────────── */
+      .ots-btn {
+        display: block;
+        width: 100%;
+        padding: 9px 16px;
+        border: none;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          background-color 0.15s,
+          opacity 0.15s;
+      }
+      .ots-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .ots-btn {
-      display: block;
-      width: 100%;
-      padding: 9px 16px;
-      border: none;
-      border-radius: 4px;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.15s, opacity 0.15s;
-    }
-    .ots-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .ots-btn-primary {
+        background: #dc4a22;
+        color: #fff;
+      }
+      .ots-btn-primary:hover:not(:disabled) {
+        background: #c43d1a;
+      }
 
-    .ots-btn-primary {
-      background: #dc4a22;
-      color: #fff;
-    }
-    .ots-btn-primary:hover:not(:disabled) {
-      background: #c43d1a;
-    }
+      .ots-btn-secondary {
+        background: var(--ots-btn-secondary-bg);
+        color: var(--ots-fg);
+        border: 1px solid var(--ots-border);
+      }
+      .ots-btn-secondary:hover:not(:disabled) {
+        background: var(--ots-btn-secondary-hover);
+      }
 
-    .ots-btn-secondary {
-      background: var(--ots-btn-secondary-bg);
-      color: var(--ots-fg);
-      border: 1px solid var(--ots-border);
-    }
-    .ots-btn-secondary:hover:not(:disabled) {
-      background: var(--ots-btn-secondary-hover);
-    }
+      .ots-btn + .ots-btn {
+        margin-top: 8px;
+      }
 
-    .ots-btn + .ots-btn {
-      margin-top: 8px;
-    }
+      /* ── Result panel ──────────────────────────────────── */
 
-    /* ── Result panel ──────────────────────────────────── */
+      .ots-result {
+        display: none;
+      }
 
-    .ots-result {
-      display: none;
-    }
+      .ots-result-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
 
-    .ots-result-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
+      .ots-check-icon {
+        width: 20px;
+        height: 20px;
+        background: var(--ots-success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .ots-check-icon svg {
+        width: 12px;
+        height: 12px;
+        fill: var(--ots-success-fg);
+      }
 
-    .ots-check-icon {
-      width: 20px;
-      height: 20px;
-      background: var(--ots-success);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .ots-check-icon svg {
-      width: 12px;
-      height: 12px;
-      fill: var(--ots-success-fg);
-    }
+      .ots-result-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ots-success);
+      }
 
-    .ots-result-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--ots-success);
-    }
+      .ots-link-display {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--ots-border);
+        border-radius: 4px;
+        font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+        font-size: 11px;
+        color: var(--ots-fg);
+        background: var(--ots-bg-surface);
+        word-break: break-all;
+        margin-bottom: 12px;
+      }
 
-    .ots-link-display {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid var(--ots-border);
-      border-radius: 4px;
-      font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
-      font-size: 11px;
-      color: var(--ots-fg);
-      background: var(--ots-bg-surface);
-      word-break: break-all;
-      margin-bottom: 12px;
-    }
+      .ots-passphrase-note {
+        font-size: 12px;
+        color: var(--ots-fg-subtle);
+        margin-bottom: 12px;
+        padding: 8px 10px;
+        background: var(--ots-warning-bg);
+        border: 1px solid var(--ots-warning-border);
+        border-radius: 4px;
+      }
 
-    .ots-passphrase-note {
-      font-size: 12px;
-      color: var(--ots-fg-subtle);
-      margin-bottom: 12px;
-      padding: 8px 10px;
-      background: var(--ots-warning-bg);
-      border: 1px solid var(--ots-warning-border);
-      border-radius: 4px;
-    }
+      /* ── Error state ───────────────────────────────────── */
 
-    /* ── Error state ───────────────────────────────────── */
+      .ots-error {
+        display: none;
+        padding: 10px 12px;
+        background: var(--ots-error-bg);
+        border: 1px solid var(--ots-error-border);
+        border-radius: 4px;
+        margin-bottom: 12px;
+      }
 
-    .ots-error {
-      display: none;
-      padding: 10px 12px;
-      background: var(--ots-error-bg);
-      border: 1px solid var(--ots-error-border);
-      border-radius: 4px;
-      margin-bottom: 12px;
-    }
+      .ots-error-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ots-error-title);
+        margin-bottom: 4px;
+      }
 
-    .ots-error-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--ots-error-title);
-      margin-bottom: 4px;
-    }
+      .ots-error-message {
+        font-size: 12px;
+        color: var(--ots-error-fg);
+      }
 
-    .ots-error-message {
-      font-size: 12px;
-      color: var(--ots-error-fg);
-    }
+      /* ── Loading spinner ───────────────────────────────── */
 
-    /* ── Loading spinner ───────────────────────────────── */
+      .ots-spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: ots-spin 0.6s linear infinite;
+        vertical-align: middle;
+        margin-right: 6px;
+      }
 
-    .ots-spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: ots-spin 0.6s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
-    }
+      @keyframes ots-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    @keyframes ots-spin {
-      to { transform: rotate(360deg); }
-    }
+      /* ── Region indicator ──────────────────────────────── */
 
-    /* ── Region indicator ──────────────────────────────── */
+      .ots-region {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 4px 8px;
+        padding: 8px 10px;
+        margin-bottom: 12px;
+        background: var(--ots-bg-surface);
+        border: 1px solid var(--ots-border-subtle);
+        border-radius: 4px;
+      }
 
-    .ots-region {
-      display: flex;
-      align-items: baseline;
-      flex-wrap: wrap;
-      gap: 4px 8px;
-      padding: 8px 10px;
-      margin-bottom: 12px;
-      background: var(--ots-bg-surface);
-      border: 1px solid var(--ots-border-subtle);
-      border-radius: 4px;
-    }
+      .ots-region-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ots-fg-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+      }
 
-    .ots-region-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--ots-fg-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
+      .ots-region-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ots-fg);
+      }
 
-    .ots-region-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ots-fg);
-    }
+      .ots-region-host {
+        font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
+        font-size: 11px;
+        color: var(--ots-fg-subtle);
+        margin-left: auto;
+      }
 
-    .ots-region-host {
-      font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
-      font-size: 11px;
-      color: var(--ots-fg-subtle);
-      margin-left: auto;
-    }
+      /* ── Utility ───────────────────────────────────────── */
 
-    /* ── Utility ───────────────────────────────────────── */
-
-    .hidden { display: none !important; }
-  </style>
-</head>
-<body>
-  <!-- ── Region indicator ──────────────────────────────── -->
-  <div class="ots-region">
-    <span class="ots-region-label">Region</span>
-    <span class="ots-region-name" id="regionName"></span>
-    <span class="ots-region-host" id="regionHost"></span>
-  </div>
-
-  <!-- ── Error display ─────────────────────────────────── -->
-  <div class="ots-error" id="errorPanel">
-    <div class="ots-error-title" id="errorTitle"></div>
-    <div class="ots-error-message" id="errorMessage"></div>
-  </div>
-
-  <!-- ── Form view ─────────────────────────────────────── -->
-  <div id="formView">
-    <div class="ots-field">
-      <label class="ots-label" for="secretInput">Secret content</label>
-      <textarea class="ots-textarea" id="secretInput" placeholder="Paste sensitive content here..." rows="4"></textarea>
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Region indicator ──────────────────────────────── -->
+    <div class="ots-region">
+      <span class="ots-region-label">Region</span>
+      <span class="ots-region-name" id="regionName"></span>
+      <span class="ots-region-host" id="regionHost"></span>
     </div>
 
-    <div class="ots-field">
-      <label class="ots-label" for="passphraseInput">Passphrase (optional)</label>
-      <input class="ots-input" type="text" id="passphraseInput" placeholder="Require a passphrase to view" autocomplete="off">
+    <!-- ── Error display ─────────────────────────────────── -->
+    <div class="ots-error" id="errorPanel">
+      <div class="ots-error-title" id="errorTitle"></div>
+      <div class="ots-error-message" id="errorMessage"></div>
     </div>
 
-    <div class="ots-field">
-      <label class="ots-label" for="ttlSelect">Expires after</label>
-      <select class="ots-select" id="ttlSelect">
-        <option value="300">5 minutes</option>
-        <option value="3600">1 hour</option>
-        <option value="86400">1 day</option>
-        <option value="259200">3 days</option>
-        <option value="604800" selected>7 days</option>
-        <option value="1209600">14 days</option>
-        <option value="2592000">30 days</option>
-      </select>
-    </div>
-
-    <button class="ots-btn ots-btn-primary" id="generateBtn">Generate Link</button>
-  </div>
-
-  <!-- ── Result view ───────────────────────────────────── -->
-  <div class="ots-result" id="resultView">
-    <div class="ots-result-header">
-      <div class="ots-check-icon">
-        <svg viewBox="0 0 16 16"><path d="M6.5 12.5l-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z"/></svg>
+    <!-- ── Form view ─────────────────────────────────────── -->
+    <div id="formView">
+      <div class="ots-field">
+        <label class="ots-label" for="secretInput">Secret content</label>
+        <textarea
+          class="ots-textarea"
+          id="secretInput"
+          placeholder="Paste sensitive content here..."
+          rows="4"
+        ></textarea>
       </div>
-      <span class="ots-result-title">Secret link ready</span>
+
+      <div class="ots-field">
+        <label class="ots-label" for="passphraseInput"
+          >Passphrase (optional)</label
+        >
+        <input
+          class="ots-input"
+          type="text"
+          id="passphraseInput"
+          placeholder="Require a passphrase to view"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="ots-field">
+        <label class="ots-label" for="ttlSelect">Expires after</label>
+        <select class="ots-select" id="ttlSelect">
+          <option value="300">5 minutes</option>
+          <option value="3600">1 hour</option>
+          <option value="86400">1 day</option>
+          <option value="259200">3 days</option>
+          <option value="604800" selected>7 days</option>
+          <option value="1209600">14 days</option>
+          <option value="2592000">30 days</option>
+        </select>
+      </div>
+
+      <button class="ots-btn ots-btn-primary" id="generateBtn">
+        Generate Link
+      </button>
     </div>
 
-    <div class="ots-link-display" id="linkDisplay"></div>
+    <!-- ── Result view ───────────────────────────────────── -->
+    <div class="ots-result" id="resultView">
+      <div class="ots-result-header">
+        <div class="ots-check-icon">
+          <svg viewBox="0 0 16 16">
+            <path d="M6.5 12.5l-4-4 1.4-1.4 2.6 2.6 5.6-5.6 1.4 1.4z" />
+          </svg>
+        </div>
+        <span class="ots-result-title">Secret link ready</span>
+      </div>
 
-    <div class="ots-passphrase-note hidden" id="passphraseNote">
-      The recipient will need the passphrase to view this secret.
+      <div class="ots-link-display" id="linkDisplay"></div>
+
+      <div class="ots-passphrase-note hidden" id="passphraseNote">
+        The recipient will need the passphrase to view this secret.
+      </div>
+
+      <button class="ots-btn ots-btn-primary" id="insertBtn">
+        Insert into Comment
+      </button>
+      <button class="ots-btn ots-btn-secondary" id="copyBtn">Copy Link</button>
+      <button class="ots-btn ots-btn-secondary" id="newSecretBtn">
+        Create Another
+      </button>
     </div>
 
-    <button class="ots-btn ots-btn-primary" id="insertBtn">Insert into Comment</button>
-    <button class="ots-btn ots-btn-secondary" id="copyBtn">Copy Link</button>
-    <button class="ots-btn ots-btn-secondary" id="newSecretBtn">Create Another</button>
-  </div>
+    <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+    <script>
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      // Onetime Secret – Zendesk Support App
+      // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
-  <script>
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    // Onetime Secret – Zendesk Support App
-    // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      (function () {
+        "use strict";
 
-    (function () {
-      'use strict';
-
-      // ── Region map ────────────────────────────────────
-      var REGIONS = {
-        us: { host: 'us.onetimesecret.com', name: 'United States' },
-        eu: { host: 'eu.onetimesecret.com', name: 'European Union' },
-        ca: { host: 'ca.onetimesecret.com', name: 'Canada' },
-        uk: { host: 'uk.onetimesecret.com', name: 'United Kingdom' },
-        nz: { host: 'nz.onetimesecret.com', name: 'New Zealand' }
-      };
-
-      // ── State ─────────────────────────────────────────
-      var client = ZAFClient.init();
-      var settings = {};
-      var currentShareUrl = '';
-
-      // ── Init ──────────────────────────────────────────
-      client.on('app.registered', function () {
-        client.get('currentUser.locale').then(function () {
-          return client.metadata();
-        }).then(function (metadata) {
-          settings = metadata.settings || {};
-          applySettings();
-          resize();
-        });
-      });
-
-      client.on('colorScheme.changed', function (scheme) {
-        document.documentElement.setAttribute('data-theme', scheme);
-      });
-
-      function applySettings() {
-        var region = (settings.region || 'us').toLowerCase().trim();
-        settings.region = region;
-
-        // Validate region
-        if (!REGIONS[region]) {
-          showError(
-            'Invalid region',
-            'The region "' + region + '" is not recognized. Go to Admin Center → Apps → Onetime Secret and set it to one of: us, eu, ca, uk, nz.'
-          );
-        }
-
-        // Populate region indicator
-        var info = REGIONS[region] || REGIONS.us;
-        document.getElementById('regionName').textContent = info.name;
-        document.getElementById('regionHost').textContent =
-          settings.customDomain || info.host;
-
-        // Pre-select the admin's default TTL in the sidebar dropdown
-        var defaultTTL = settings.defaultTTL;
-        if (defaultTTL) {
-          var ttl = document.getElementById('ttlSelect');
-          var match = ttl.querySelector('option[value="' + defaultTTL + '"]');
-          if (match) {
-            ttl.value = defaultTTL;
-          }
-          // If the value doesn't match a dropdown option, leave the
-          // built-in default (7 days) selected rather than breaking.
-        }
-      }
-
-      // ── OTS API Client ────────────────────────────────
-
-      function getBaseUrl() {
-        var region = (settings.region || 'us').toLowerCase();
-        var info = REGIONS[region] || REGIONS.us;
-        return 'https://' + info.host;
-      }
-
-      /**
-       * Create a secret via the OTS v2 API.
-       *
-       * Auth uses {{setting.*}} placeholders so the ZAF proxy
-       * substitutes the real values server-side. The API key
-       * never reaches the browser.
-       *
-       * @param {Object} opts
-       * @param {string} opts.secret       - The secret content
-       * @param {string} [opts.passphrase] - Optional passphrase
-       * @param {number} [opts.ttl]        - TTL in seconds
-       * @returns {Promise<Object>}        - The API response
-       */
-      function concealSecret(opts) {
-        var baseUrl = getBaseUrl();
-        var url = baseUrl + '/api/v2/secret/conceal';
-
-        var payload = {
-          secret: opts.secret,
-          ttl: opts.ttl
+        // ── Region map ────────────────────────────────────
+        var REGIONS = {
+          eu: { host: "eu.onetimesecret.com", name: "European Union" },
+          uk: { host: "uk.onetimesecret.com", name: "United Kingdom" },
+          ca: { host: "ca.onetimesecret.com", name: "Canada" },
+          nz: { host: "nz.onetimesecret.com", name: "New Zealand" },
+          us: { host: "us.onetimesecret.com", name: "United States" },
         };
 
-        // Only include passphrase if explicitly provided
-        if (opts.passphrase) {
-          payload.passphrase = opts.passphrase;
-        }
+        // ── State ─────────────────────────────────────────
+        var client = ZAFClient.init();
+        var settings = {};
+        var currentShareUrl = "";
 
-        // Include custom domain for branded share links
-        if (settings.customDomain) {
-          payload.share_domain = settings.customDomain;
-        }
+        // ── Init ──────────────────────────────────────────
+        client.on("app.registered", function () {
+          client.metadata().then(function (metadata) {
+            settings = metadata.settings || {};
+            applySettings();
+            resize();
+          });
+        });
 
-        // ZAF's basic_auth mechanism: the proxy base64-encodes
-        // username:password server-side and substitutes {{basic_auth.token}}.
-        // The API key (a secure setting) never reaches the browser.
-        // apiUsername is read from metadata since it's not secure.
-        return client.request({
-          url: url,
-          type: 'POST',
-          contentType: 'application/json',
-          headers: {
-            'Authorization': 'Basic {{basic_auth.token}}'
-          },
-          basic_auth: {
-            username: settings.apiUsername,
-            password: '{{setting.apiKey}}'
-          },
-          data: JSON.stringify({ secret: payload }),
-          secure: true
-        }).then(function (response) {
-          var data = response;
+        client.on("colorScheme.changed", function (scheme) {
+          document.documentElement.setAttribute("data-theme", scheme);
+        });
 
-          if (!data.success) {
-            throw new Error(data.error || 'Secret creation failed');
+        function applySettings() {
+          var region = (settings.region || "us").toLowerCase().trim();
+          settings.region = region;
+
+          // Validate region
+          if (!REGIONS[region]) {
+            showError(
+              "Invalid region",
+              'The region "' +
+                region +
+                '" is not recognized. Go to Admin Center → Apps → Onetime Secret and set it to one of: us, eu, ca, uk, nz.',
+            );
           }
 
-          var shareUrl = buildShareUrl(data);
-          return {
-            shareUrl: shareUrl,
-            receipt: data.record.receipt,
-            hasPassphrase: !!opts.passphrase
-          };
-        });
-      }
+          // Populate region indicator
+          var info = REGIONS[region] || REGIONS.us;
+          document.getElementById("regionName").textContent = info.name;
+          document.getElementById("regionHost").textContent =
+            settings.customDomain || info.host;
 
-      /**
-       * Construct the share URL from the API response.
-       *
-       * The conceal endpoint's receipt.safe_dump does NOT include
-       * share_url (that's only added by the ShowReceipt endpoint).
-       * So we construct the URL from the secret's identifier, which
-       * is the key used in /secret/:key routes. This is different
-       * from receipt.identifier which is the receipt's own ID.
-       */
-      function buildShareUrl(data) {
-        var receipt = data.record.receipt || data.record.metadata;
-
-        // If the API ever includes share_url, prefer it
-        if (receipt && receipt.share_url) {
-          if (settings.customDomain) {
-            try {
-              var parsed = new URL(receipt.share_url);
-              parsed.hostname = settings.customDomain;
-              return parsed.toString();
-            } catch (e) {
-              // Fall through to manual construction
+          // Pre-select the admin's default TTL in the sidebar dropdown
+          var defaultTTL = settings.defaultTTL;
+          if (defaultTTL) {
+            var ttl = document.getElementById("ttlSelect");
+            var match = ttl.querySelector('option[value="' + defaultTTL + '"]');
+            if (match) {
+              ttl.value = defaultTTL;
             }
+            // If the value doesn't match a dropdown option, leave the
+            // built-in default (7 days) selected rather than breaking.
           }
-          return receipt.share_url;
         }
 
-        // Build from the secret's identifier (NOT receipt.identifier).
-        // The /secret/ route resolves against the secret key.
-        var secretKey = data.record.secret ? data.record.secret.identifier : '';
-        var host = settings.customDomain || getBaseUrl().replace('https://', '');
-        return 'https://' + host + '/secret/' + secretKey;
-      }
+        // ── OTS API Client ────────────────────────────────
 
-      // ── UI Handlers ───────────────────────────────────
-
-      var formView = document.getElementById('formView');
-      var resultView = document.getElementById('resultView');
-      var errorPanel = document.getElementById('errorPanel');
-      var generateBtn = document.getElementById('generateBtn');
-      var insertBtn = document.getElementById('insertBtn');
-      var copyBtn = document.getElementById('copyBtn');
-      var newSecretBtn = document.getElementById('newSecretBtn');
-      var secretInput = document.getElementById('secretInput');
-      var passphraseInput = document.getElementById('passphraseInput');
-      var ttlSelect = document.getElementById('ttlSelect');
-      var linkDisplay = document.getElementById('linkDisplay');
-      var passphraseNote = document.getElementById('passphraseNote');
-
-      generateBtn.addEventListener('click', handleGenerate);
-      insertBtn.addEventListener('click', handleInsert);
-      copyBtn.addEventListener('click', handleCopy);
-      newSecretBtn.addEventListener('click', handleReset);
-
-      function handleGenerate() {
-        var secret = secretInput.value.trim();
-        if (!secret) {
-          showError('Missing content', 'Please enter the content you want to share.');
-          return;
+        function getBaseUrl() {
+          var region = (settings.region || "us").toLowerCase();
+          var info = REGIONS[region] || REGIONS.us;
+          return "https://" + info.host;
         }
 
-        hideError();
-        setLoading(true);
+        /**
+         * Create a secret via the OTS v2 API.
+         *
+         * Auth uses {{setting.*}} placeholders so the ZAF proxy
+         * substitutes the real values server-side. The API key
+         * never reaches the browser.
+         *
+         * @param {Object} opts
+         * @param {string} opts.secret       - The secret content
+         * @param {string} [opts.passphrase] - Optional passphrase
+         * @param {number} [opts.ttl]        - TTL in seconds
+         * @returns {Promise<Object>}        - The API response
+         */
+        function concealSecret(opts) {
+          var baseUrl = getBaseUrl();
+          var url = baseUrl + "/api/v2/secret/conceal";
 
-        var opts = {
-          secret: secret,
-          ttl: parseInt(ttlSelect.value, 10)
-        };
+          var payload = {
+            secret: opts.secret,
+            ttl: opts.ttl,
+          };
 
-        var passphrase = passphraseInput.value;
-        if (passphrase) {
-          opts.passphrase = passphrase;
-        }
-
-        concealSecret(opts).then(function (result) {
-          currentShareUrl = result.shareUrl;
-          linkDisplay.textContent = currentShareUrl;
-
-          if (result.hasPassphrase) {
-            passphraseNote.classList.remove('hidden');
-          } else {
-            passphraseNote.classList.add('hidden');
+          // Only include passphrase if explicitly provided
+          if (opts.passphrase) {
+            payload.passphrase = opts.passphrase;
           }
 
-          formView.style.display = 'none';
-          resultView.style.display = 'block';
+          // Include custom domain for branded share links
+          if (settings.customDomain) {
+            payload.share_domain = settings.customDomain;
+          }
+
+          // ZAF's basic_auth mechanism: the proxy base64-encodes
+          // username:password server-side and substitutes {{basic_auth.token}}.
+          // The API key (a secure setting) never reaches the browser.
+          // apiUsername is read from metadata since it's not secure.
+          return client
+            .request({
+              url: url,
+              type: "POST",
+              contentType: "application/json",
+              headers: {
+                Authorization: "Basic {{basic_auth.token}}",
+              },
+              basic_auth: {
+                username: settings.apiUsername,
+                password: "{{setting.apiKey}}",
+              },
+              data: JSON.stringify({ secret: payload }),
+              secure: true,
+            })
+            .then(function (response) {
+              var data = response;
+
+              if (!data.success) {
+                throw new Error(data.error || "Secret creation failed");
+              }
+
+              var shareUrl = buildShareUrl(data);
+              return {
+                shareUrl: shareUrl,
+                receipt: data.record.receipt,
+                hasPassphrase: !!opts.passphrase,
+              };
+            });
+        }
+
+        /**
+         * Construct the share URL from the API response.
+         *
+         * The conceal endpoint's receipt.safe_dump does NOT include
+         * share_url (that's only added by the ShowReceipt endpoint).
+         * So we construct the URL from the secret's identifier, which
+         * is the key used in /secret/:key routes. This is different
+         * from receipt.identifier which is the receipt's own ID.
+         */
+        function buildShareUrl(data) {
+          var receipt = data.record.receipt || data.record.metadata;
+
+          // If the API ever includes share_url, prefer it
+          if (receipt && receipt.share_url) {
+            if (settings.customDomain) {
+              try {
+                var parsed = new URL(receipt.share_url);
+                parsed.hostname = settings.customDomain;
+                return parsed.toString();
+              } catch (e) {
+                // Fall through to manual construction
+              }
+            }
+            return receipt.share_url;
+          }
+
+          // Build from the secret's identifier (NOT receipt.identifier).
+          // The /secret/ route resolves against the secret key.
+          var secretKey = data.record.secret
+            ? data.record.secret.identifier
+            : "";
+          var host =
+            settings.customDomain || getBaseUrl().replace("https://", "");
+          return "https://" + host + "/secret/" + secretKey;
+        }
+
+        // ── UI Handlers ───────────────────────────────────
+
+        var formView = document.getElementById("formView");
+        var resultView = document.getElementById("resultView");
+        var errorPanel = document.getElementById("errorPanel");
+        var generateBtn = document.getElementById("generateBtn");
+        var insertBtn = document.getElementById("insertBtn");
+        var copyBtn = document.getElementById("copyBtn");
+        var newSecretBtn = document.getElementById("newSecretBtn");
+        var secretInput = document.getElementById("secretInput");
+        var passphraseInput = document.getElementById("passphraseInput");
+        var ttlSelect = document.getElementById("ttlSelect");
+        var linkDisplay = document.getElementById("linkDisplay");
+        var passphraseNote = document.getElementById("passphraseNote");
+
+        generateBtn.addEventListener("click", handleGenerate);
+        insertBtn.addEventListener("click", handleInsert);
+        copyBtn.addEventListener("click", handleCopy);
+        newSecretBtn.addEventListener("click", handleReset);
+
+        function handleGenerate() {
+          var secret = secretInput.value.trim();
+          if (!secret) {
+            showError(
+              "Missing content",
+              "Please enter the content you want to share.",
+            );
+            return;
+          }
+
+          hideError();
+          setLoading(true);
+
+          var opts = {
+            secret: secret,
+            ttl: parseInt(ttlSelect.value, 10),
+          };
+
+          var passphrase = passphraseInput.value;
+          if (passphrase) {
+            opts.passphrase = passphrase;
+          }
+
+          concealSecret(opts)
+            .then(function (result) {
+              currentShareUrl = result.shareUrl;
+              linkDisplay.textContent = currentShareUrl;
+
+              if (result.hasPassphrase) {
+                passphraseNote.classList.remove("hidden");
+              } else {
+                passphraseNote.classList.add("hidden");
+              }
+
+              formView.style.display = "none";
+              resultView.style.display = "block";
+              resize();
+            })
+            .catch(function (err) {
+              var msg =
+                "Could not reach the Onetime Secret API. Check your settings.";
+              if (err && err.status === 401) {
+                msg = "Authentication failed. Check your API username and key.";
+              } else if (err && err.responseJSON && err.responseJSON.error) {
+                msg = err.responseJSON.error;
+              } else if (err && err.message) {
+                msg = err.message;
+              }
+              showError("Something went wrong", msg);
+            })
+            .finally(function () {
+              setLoading(false);
+            });
+        }
+
+        function handleInsert() {
+          if (!currentShareUrl) return;
+
+          // Insert the link into the current ticket comment
+          client.invoke("comment.appendText", currentShareUrl);
+        }
+
+        function handleCopy() {
+          if (!currentShareUrl) return;
+
+          navigator.clipboard
+            .writeText(currentShareUrl)
+            .then(function () {
+              var original = copyBtn.textContent;
+              copyBtn.textContent = "Copied!";
+              setTimeout(function () {
+                copyBtn.textContent = original;
+              }, 1500);
+            })
+            .catch(function () {
+              // Fallback: select the text in the display
+              var range = document.createRange();
+              range.selectNodeContents(linkDisplay);
+              var sel = window.getSelection();
+              sel.removeAllRanges();
+              sel.addRange(range);
+            });
+        }
+
+        function handleReset() {
+          currentShareUrl = "";
+          secretInput.value = "";
+          passphraseInput.value = "";
+          linkDisplay.textContent = "";
+          passphraseNote.classList.add("hidden");
+          hideError();
+
+          resultView.style.display = "none";
+          formView.style.display = "block";
           resize();
-        }).catch(function (err) {
-          var msg = 'Could not reach the Onetime Secret API. Check your settings.';
-          if (err && err.status === 401) {
-            msg = 'Authentication failed. Check your API username and key.';
-          } else if (err && err.responseJSON && err.responseJSON.error) {
-            msg = err.responseJSON.error;
-          } else if (err && err.message) {
-            msg = err.message;
-          }
-          showError('Something went wrong', msg);
-        }).finally(function () {
-          setLoading(false);
-        });
-      }
-
-      function handleInsert() {
-        if (!currentShareUrl) return;
-
-        // Insert the link into the current ticket comment
-        client.invoke('comment.appendText', currentShareUrl);
-      }
-
-      function handleCopy() {
-        if (!currentShareUrl) return;
-
-        navigator.clipboard.writeText(currentShareUrl).then(function () {
-          var original = copyBtn.textContent;
-          copyBtn.textContent = 'Copied!';
-          setTimeout(function () {
-            copyBtn.textContent = original;
-          }, 1500);
-        }).catch(function () {
-          // Fallback: select the text in the display
-          var range = document.createRange();
-          range.selectNodeContents(linkDisplay);
-          var sel = window.getSelection();
-          sel.removeAllRanges();
-          sel.addRange(range);
-        });
-      }
-
-      function handleReset() {
-        currentShareUrl = '';
-        secretInput.value = '';
-        passphraseInput.value = '';
-        linkDisplay.textContent = '';
-        passphraseNote.classList.add('hidden');
-        hideError();
-
-        resultView.style.display = 'none';
-        formView.style.display = 'block';
-        resize();
-      }
-
-      function setLoading(loading) {
-        if (loading) {
-          generateBtn.disabled = true;
-          generateBtn.innerHTML = '<span class="ots-spinner"></span>Encrypting...';
-        } else {
-          generateBtn.disabled = false;
-          generateBtn.textContent = 'Generate Link';
         }
-      }
 
-      function showError(title, message) {
-        document.getElementById('errorTitle').textContent = title;
-        document.getElementById('errorMessage').textContent = message;
-        errorPanel.style.display = 'block';
-        resize();
-      }
+        function setLoading(loading) {
+          if (loading) {
+            generateBtn.disabled = true;
+            generateBtn.innerHTML =
+              '<span class="ots-spinner"></span>Encrypting...';
+          } else {
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Generate Link";
+          }
+        }
 
-      function hideError() {
-        errorPanel.style.display = 'none';
-      }
+        function showError(title, message) {
+          document.getElementById("errorTitle").textContent = title;
+          document.getElementById("errorMessage").textContent = message;
+          errorPanel.style.display = "block";
+          resize();
+        }
 
-      function resize() {
-        client.invoke('resize', { width: '100%', height: document.body.scrollHeight + 16 + 'px' });
-      }
-    })();
-  </script>
-</body>
+        function hideError() {
+          errorPanel.style.display = "none";
+        }
+
+        function resize() {
+          client.invoke("resize", {
+            width: "100%",
+            height: document.body.scrollHeight + 16 + "px",
+          });
+        }
+      })();
+    </script>
+  </body>
 </html>
