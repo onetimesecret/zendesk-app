@@ -452,16 +452,17 @@
       /**
        * Construct the share URL from the API response.
        *
-       * If a custom domain is configured, use it. Otherwise fall back
-       * to the share_url returned by the API, or construct from the
-       * regional domain.
+       * The conceal endpoint's receipt.safe_dump does NOT include
+       * share_url (that's only added by the ShowReceipt endpoint).
+       * So we construct the URL from the secret's identifier, which
+       * is the key used in /secret/:key routes. This is different
+       * from receipt.identifier which is the receipt's own ID.
        */
       function buildShareUrl(data) {
         var receipt = data.record.receipt || data.record.metadata;
 
-        // Prefer the API's share_url if present
+        // If the API ever includes share_url, prefer it
         if (receipt && receipt.share_url) {
-          // If custom domain is set, rewrite the host portion
           if (settings.customDomain) {
             try {
               var parsed = new URL(receipt.share_url);
@@ -474,10 +475,11 @@
           return receipt.share_url;
         }
 
-        // Manual fallback
+        // Build from the secret's identifier (NOT receipt.identifier).
+        // The /secret/ route resolves against the secret key.
+        var secretKey = data.record.secret ? data.record.secret.identifier : '';
         var host = settings.customDomain || getBaseUrl().replace('https://', '');
-        var identifier = receipt ? receipt.identifier : '';
-        return 'https://' + host + '/secret/' + identifier;
+        return 'https://' + host + '/secret/' + secretKey;
       }
 
       // ── UI Handlers ───────────────────────────────────
