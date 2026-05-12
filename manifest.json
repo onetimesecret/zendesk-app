@@ -27,8 +27,7 @@
       "name": "apiUsername",
       "type": "text",
       "required": true,
-      "secure": false,
-      "helpText": "Your account identifier or email address"
+      "secure": false
     },
     {
       "name": "apiKey",
@@ -40,23 +39,20 @@
       "name": "region",
       "type": "text",
       "required": true,
-      "secure": false,
-      "helpText": "(Required) The region where the links will be created. One of: eu, ca, us, uk, nz"
+      "secure": false
     },
     {
       "name": "defaultTTL",
       "type": "text",
       "required": false,
       "secure": false,
-      "default": "604800",
-      "helpText": "(Optional) The amount of time before the secret link expires (in seconds, default is 7 days)"
+      "default": "604800"
     },
     {
       "name": "customDomain",
       "type": "text",
       "required": false,
-      "secure": false,
-      "helpText": "(optional) Your custom domain"
+      "secure": false
     }
   ],
   "domainWhitelist": [
