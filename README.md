@@ -31,6 +31,24 @@ Search for "Onetime Secret" in the Zendesk Marketplace and click Install.
    If you have `zcli` installed via pnpm in another workspace, use `pnpm exec zcli apps:server "$(pwd)"`. Quoting the path is required if your checkout sits under a directory containing spaces or `&` — `zcli` splits unquoted paths on whitespace and fails with `Invalid app path`.
 4. Package with `zcli apps:package "$(pwd)"` to create a ZIP for upload
 
+### Testing the app in Zendesk
+
+The local dev server only serves the app's static assets — `http://localhost:4567` will return 404 if you open it directly. Zendesk apps run inside the agent workspace, so you need a Zendesk instance to load the app into.
+
+1. **Get a Zendesk Suite trial** at [zendesk.com/register](https://www.zendesk.com/register/) (14 days, no card). Pick a subdomain — you'll get `YOUR-SUBDOMAIN.zendesk.com`.
+2. **Log in** at `https://YOUR-SUBDOMAIN.zendesk.com/agent`.
+3. **Create a test ticket**: click the `+` icon top-left → Ticket → fill in any requester / subject → Submit as New.
+4. **Accept the self-signed cert**: visit `https://localhost:4567` once and accept the browser warning (zcli signs its own cert).
+5. **Load the app** by appending `?zcli_apps=true` to the agent URL:
+
+   ```
+   https://YOUR-SUBDOMAIN.zendesk.com/agent/?zcli_apps=true
+   ```
+
+6. **Open the ticket** you created — the Onetime Secret panel appears in the right sidebar, fetched live from your local server. Edits to `assets/iframe.html` are picked up on browser reload.
+
+The `apiUsername` / `apiKey` you entered when starting `zcli apps:server` are passed to the iframe as settings, so the Generate Link button calls the real OTS API.
+
 ## Configuration
 
 After installing, you'll be prompted for these settings:
