@@ -1,18 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.css">
+  <script>
+    // Apply color scheme before first paint to avoid flash
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var scheme = params.get('colorScheme');
+      if (scheme === 'dark' || scheme === 'light') {
+        document.documentElement.setAttribute('data-theme', scheme);
+      }
+    })();
+  </script>
   <style>
+    /* ── Theme tokens ──────────────────────────────────── */
+
+    [data-theme="light"] {
+      --ots-bg: #fff;
+      --ots-bg-surface: #f8f9f9;
+      --ots-fg: #2f3941;
+      --ots-fg-muted: #68737d;
+      --ots-fg-subtle: #87929d;
+      --ots-border: #d8dcde;
+      --ots-border-subtle: #e9ebed;
+      --ots-accent: #1f73b7;
+      --ots-accent-shadow: rgba(31, 115, 183, 0.15);
+      --ots-success: #038153;
+      --ots-success-fg: #fff;
+      --ots-error-bg: #fff0f1;
+      --ots-error-border: #e35b66;
+      --ots-error-title: #cc3340;
+      --ots-error-fg: #681219;
+      --ots-warning-bg: #fff8f0;
+      --ots-warning-border: #ffd073;
+      --ots-btn-secondary-bg: #f8f9f9;
+      --ots-btn-secondary-hover: #e9ebed;
+    }
+
+    [data-theme="dark"] {
+      --ots-bg: #151a1e;
+      --ots-bg-surface: #1e252b;
+      --ots-fg: #d8dcde;
+      --ots-fg-muted: #87929d;
+      --ots-fg-subtle: #68737d;
+      --ots-border: #3a4650;
+      --ots-border-subtle: #2d3843;
+      --ots-accent: #5293c7;
+      --ots-accent-shadow: rgba(82, 147, 199, 0.25);
+      --ots-success: #0a8060;
+      --ots-success-fg: #d8dcde;
+      --ots-error-bg: #2d1619;
+      --ots-error-border: #cc3340;
+      --ots-error-title: #e35b66;
+      --ots-error-fg: #f5b5ba;
+      --ots-warning-bg: #2d2415;
+      --ots-warning-border: #c49a3a;
+      --ots-btn-secondary-bg: #1e252b;
+      --ots-btn-secondary-hover: #2d3843;
+    }
+
+    /* ── Base ──────────────────────────────────────────── */
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       font-size: 13px;
-      color: #2f3941;
+      color: var(--ots-fg);
       padding: 12px;
-      background: #fff;
+      background: var(--ots-bg);
     }
 
     /* ── Form controls ─────────────────────────────────── */
@@ -25,7 +83,7 @@
       display: block;
       font-size: 12px;
       font-weight: 600;
-      color: #68737d;
+      color: var(--ots-fg-muted);
       margin-bottom: 4px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
@@ -35,50 +93,52 @@
       width: 100%;
       min-height: 80px;
       padding: 8px 10px;
-      border: 1px solid #d8dcde;
+      border: 1px solid var(--ots-border);
       border-radius: 4px;
       font-family: inherit;
       font-size: 13px;
-      color: #2f3941;
+      color: var(--ots-fg);
+      background: var(--ots-bg);
       resize: vertical;
       transition: border-color 0.15s;
     }
     .ots-textarea:focus {
       outline: none;
-      border-color: #1f73b7;
-      box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.15);
+      border-color: var(--ots-accent);
+      box-shadow: 0 0 0 3px var(--ots-accent-shadow);
     }
 
     .ots-input {
       width: 100%;
       padding: 7px 10px;
-      border: 1px solid #d8dcde;
+      border: 1px solid var(--ots-border);
       border-radius: 4px;
       font-family: inherit;
       font-size: 13px;
-      color: #2f3941;
+      color: var(--ots-fg);
+      background: var(--ots-bg);
       transition: border-color 0.15s;
     }
     .ots-input:focus {
       outline: none;
-      border-color: #1f73b7;
-      box-shadow: 0 0 0 3px rgba(31, 115, 183, 0.15);
+      border-color: var(--ots-accent);
+      box-shadow: 0 0 0 3px var(--ots-accent-shadow);
     }
 
     .ots-select {
       width: 100%;
       padding: 7px 10px;
-      border: 1px solid #d8dcde;
+      border: 1px solid var(--ots-border);
       border-radius: 4px;
       font-family: inherit;
       font-size: 13px;
-      color: #2f3941;
-      background: #fff;
+      color: var(--ots-fg);
+      background: var(--ots-bg);
       cursor: pointer;
     }
     .ots-select:focus {
       outline: none;
-      border-color: #1f73b7;
+      border-color: var(--ots-accent);
     }
 
     /* ── Buttons ────────────────────────────────────────── */
@@ -109,12 +169,12 @@
     }
 
     .ots-btn-secondary {
-      background: #f8f9f9;
-      color: #2f3941;
-      border: 1px solid #d8dcde;
+      background: var(--ots-btn-secondary-bg);
+      color: var(--ots-fg);
+      border: 1px solid var(--ots-border);
     }
     .ots-btn-secondary:hover:not(:disabled) {
-      background: #e9ebed;
+      background: var(--ots-btn-secondary-hover);
     }
 
     .ots-btn + .ots-btn {
@@ -137,7 +197,7 @@
     .ots-check-icon {
       width: 20px;
       height: 20px;
-      background: #038153;
+      background: var(--ots-success);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -147,35 +207,35 @@
     .ots-check-icon svg {
       width: 12px;
       height: 12px;
-      fill: #fff;
+      fill: var(--ots-success-fg);
     }
 
     .ots-result-title {
       font-size: 14px;
       font-weight: 600;
-      color: #038153;
+      color: var(--ots-success);
     }
 
     .ots-link-display {
       width: 100%;
       padding: 8px 10px;
-      border: 1px solid #d8dcde;
+      border: 1px solid var(--ots-border);
       border-radius: 4px;
       font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Mono", monospace;
       font-size: 11px;
-      color: #2f3941;
-      background: #f8f9f9;
+      color: var(--ots-fg);
+      background: var(--ots-bg-surface);
       word-break: break-all;
       margin-bottom: 12px;
     }
 
     .ots-passphrase-note {
       font-size: 12px;
-      color: #87929d;
+      color: var(--ots-fg-subtle);
       margin-bottom: 12px;
       padding: 8px 10px;
-      background: #fff8f0;
-      border: 1px solid #ffd073;
+      background: var(--ots-warning-bg);
+      border: 1px solid var(--ots-warning-border);
       border-radius: 4px;
     }
 
@@ -184,8 +244,8 @@
     .ots-error {
       display: none;
       padding: 10px 12px;
-      background: #fff0f1;
-      border: 1px solid #e35b66;
+      background: var(--ots-error-bg);
+      border: 1px solid var(--ots-error-border);
       border-radius: 4px;
       margin-bottom: 12px;
     }
@@ -193,13 +253,13 @@
     .ots-error-title {
       font-size: 12px;
       font-weight: 600;
-      color: #cc3340;
+      color: var(--ots-error-title);
       margin-bottom: 4px;
     }
 
     .ots-error-message {
       font-size: 12px;
-      color: #681219;
+      color: var(--ots-error-fg);
     }
 
     /* ── Loading spinner ───────────────────────────────── */
@@ -228,7 +288,7 @@
       gap: 8px;
       padding-bottom: 12px;
       margin-bottom: 12px;
-      border-bottom: 1px solid #e9ebed;
+      border-bottom: 1px solid var(--ots-border-subtle);
     }
 
     .ots-brand-icon {
@@ -240,12 +300,12 @@
     .ots-brand-text {
       font-size: 14px;
       font-weight: 600;
-      color: #2f3941;
+      color: var(--ots-fg);
     }
 
     .ots-brand-region {
       font-size: 11px;
-      color: #87929d;
+      color: var(--ots-fg-subtle);
       font-weight: 400;
       margin-left: auto;
       text-transform: uppercase;
@@ -353,6 +413,10 @@
           applySettings();
           resize();
         });
+      });
+
+      client.on('colorScheme.changed', function (scheme) {
+        document.documentElement.setAttribute('data-theme', scheme);
       });
 
       function applySettings() {
