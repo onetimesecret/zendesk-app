@@ -103,6 +103,55 @@ This app uses the [Onetime Secret v2 API](https://docs.onetimesecret.com/en/rest
 - Secret content is encrypted at rest by OTS and destroyed after first view
 - No secret content is ever stored in Zendesk
 
+## Zendesk Marketplace compliance
+
+This section tracks how the app addresses the [requirements for publishing on the Zendesk Marketplace](https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/).
+
+### Global OAuth access tokens
+
+**Requirement:** Public apps making server-side requests to Zendesk APIs must use [global OAuth access tokens](https://developer.zendesk.com/documentation/marketplace/building-a-marketplace-app/set-up-a-global-oauth-client/) rather than API tokens or regular OAuth tokens.
+
+**Status:** Not applicable. This app does not make requests to Zendesk APIs. It calls the Onetime Secret API through the ZAF server-side proxy and uses the ZAF Client SDK for all Zendesk interactions (reading metadata, inserting ticket comments, resizing the iframe).
+
+### Request header requirements
+
+**Requirement:** Marketplace apps must include `X-Zendesk-Marketplace-Name`, `X-Zendesk-Marketplace-Organization-Id`, and `X-Zendesk-Marketplace-App-Id` headers on API requests made from an external source.
+
+**Status:** Not applicable. Per Zendesk's documentation: "The requirement doesn't apply to API requests from apps using the Zendesk Apps framework." This is a ZAF v2 iframe app; all outbound requests go through `client.request()` and the ZAF proxy.
+
+### Credential protection
+
+**Requirement:** Apps must not expose API credentials to the browser or transmit them insecurely.
+
+**Status:** Addressed. The OTS API key is stored as a `secure` parameter in the manifest. The ZAF proxy performs Base64 encoding and header substitution server-side via `{{setting.apiKey}}` and `{{basic_auth.token}}` placeholders. The raw key never reaches the browser.
+
+### Domain whitelisting
+
+**Requirement:** Apps should restrict outbound requests to known, trusted domains.
+
+**Status:** Addressed. The manifest's `domainWhitelist` enumerates all five regional OTS endpoints plus a dynamic `{{setting.customDomain}}` entry for branded domains. Requests to any other domain are blocked by the framework.
+
+### Zendesk data access disclosure
+
+**Requirement:** Marketplace listings must disclose what Zendesk data the app accesses and for what purpose.
+
+**Status:** This app does not read or access any Zendesk ticket data. Agents manually enter content into the app's form field. The only Zendesk interactions are reading the current user's locale (for initialization), reading app installation settings, and writing to the ticket comment field when the agent clicks "Insert." The marketplace listing should state this explicitly.
+
+### Assets and content
+
+**Requirement:** Apps must provide a logo (320×320), small logo (128×128), at least one screenshot (1024×768), short description, long description, and installation instructions.
+
+**Status:** All present. Logos are in `assets/`, screenshots are `screenshot-0.png` through `screenshot-2.png`, and marketplace copy is in `translations/en.json` under the `app` key.
+
+### Remaining submission steps
+
+These are process/administrative steps, not code changes:
+
+1. Request a sponsored test account
+2. Register the organization on the Zendesk developer portal
+3. Create a Zendesk Marketplace profile
+4. Submit the app for review
+
 ## License
 
 MIT. See [LICENSE](./LICENSE).
