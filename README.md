@@ -47,7 +47,7 @@ The local dev server only serves the app's static assets — `http://localhost:4
 
 6. **Open the ticket** you created — the Onetime Secret panel appears in the right sidebar, fetched live from your local server. Edits to `assets/iframe.html` are picked up on browser reload.
 
-The `apiUsername` / `apiKey` you entered when starting `zcli apps:server` are passed to the iframe as settings, so the Generate Link button calls the real OTS API.
+**Note on local dev vs. uploaded apps:** ZCLI's local server does not support secure settings or the ZAF proxy. The `{{setting.apiKey}}` and `{{basic_auth.token}}` placeholders are passed through as literal strings, so API calls will fail with 401. To test against the real OTS API, package the app with `zcli apps:package` and upload it as a private app via Admin Center → Apps → Upload private app.
 
 ## Configuration
 
@@ -57,9 +57,8 @@ After installing, you'll be prompted for these settings:
 |---------|----------|-------------|
 | API Username | Yes | Your Onetime Secret account email |
 | API Key | Yes | Your API key (found on your account page) |
-| Region | No | `us`, `eu`, `ca`, `uk`, or `nz` (defaults to `us`) |
+| Region | Yes | `us`, `eu`, `ca`, `uk`, or `nz` |
 | Custom Domain | No | Your custom domain for branded links |
-| Default TTL | No | Default expiry in seconds (defaults to 604800 = 7 days) |
 
 ### Getting your API key
 
@@ -99,7 +98,7 @@ This app uses the [Onetime Secret v2 API](https://docs.onetimesecret.com/en/rest
 
 ## Security
 
-- API keys are stored as secure parameters in Zendesk (encrypted, never exposed in browser)
+- API keys are stored as secure parameters in Zendesk and sent via the ZAF server-side proxy (the browser never sees the raw key)
 - The `domainWhitelist` restricts API calls to official OTS regional domains and your custom domain
 - Secret content is encrypted at rest by OTS and destroyed after first view
 - No secret content is ever stored in Zendesk
